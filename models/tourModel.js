@@ -127,14 +127,13 @@ tourSchema.virtual('reviews', {
   foreignField: 'tour',
 });
 
-//Query middleware for all the query methods that start with "find"
-
-//Document middleware: runs before .save() and .create() methods
+//Document middleware: runs before .save() methods
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
+// Query middleware for all the query methods that start with "find"
 // Do not show secret tours
 // Populate Guides
 tourSchema.pre(/^find/, function (next) {
