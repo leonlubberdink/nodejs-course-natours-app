@@ -34,6 +34,8 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 // Do not show secret tours
 // Populate Guides
 reviewSchema.pre(/^find/, function (next) {
