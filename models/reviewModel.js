@@ -33,6 +33,18 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+// Do not show secret tours
+// Populate Guides
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name photo',
+  });
+
+  this.start = Date.now();
+  next();
+});
+
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = Review;

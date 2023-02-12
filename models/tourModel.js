@@ -120,22 +120,20 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// Virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'tour',
+});
+
+//Query middleware for all the query methods that start with "find"
+
 //Document middleware: runs before .save() and .create() methods
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
-
-// //Embedding users in tours
-// tourSchema.pre('save', async function (next) {
-//   const guidesPromises = this.guides.map(
-//     async (userId) => await User.findById(userId)
-//   );
-//   this.guides = await Promise.all(guidesPromises);
-//   next();
-// });
-
-//Query middleware for all the query methods that start with "find"
 
 // Do not show secret tours
 // Populate Guides
@@ -159,6 +157,15 @@ tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
+
+// //Embedding users in tours
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(
+//     async (userId) => await User.findById(userId)
+//   );
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 
