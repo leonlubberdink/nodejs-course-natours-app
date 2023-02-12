@@ -10,20 +10,16 @@ router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
-router.patch(
-  '/updateMyPassword',
-  authController.protect,
-  authController.updatePassword
-);
+// After this middleware, all routes  have auth protection
+router.use(authController.protect);
 
-router.get(
-  '/me',
-  authController.protect,
-  userController.getMe,
-  userController.getUser
-);
-router.patch('/updateMe', authController.protect, userController.updateMe);
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.get('/me', userController.getMe, userController.getUser);
+router.patch('/updateMe', userController.updateMe);
+router.patch('/updateMyPassword', authController.updatePassword);
+router.delete('/deleteMe', userController.deleteMe);
+
+// After this middleware, all routes need admin role
+router.use(authController.restrictTo('admin'));
 
 router
   .route('/')
